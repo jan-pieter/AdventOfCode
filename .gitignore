@@ -1,0 +1,34 @@
+*.class
+*.log
+
+# SBT
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+.history
+
+# IDEA InteliJ
+.idea/*
+.idea_modules/*
+
+# Eclipse
+/.project
+/.classpath
+/.settings
+/bin
+/.cache
+/.cache-main
+/.cache-tests
+
+# Atom
+.ensime
+.ensime_cache
+
+.DS_Store
+
+# application specific
+version.txt
+.env
