@@ -13,22 +13,3 @@ project/plugins/project/
 # IDEA InteliJ
 .idea/*
 .idea_modules/*
-
-# Eclipse
-/.project
-/.classpath
-/.settings
-/bin
-/.cache
-/.cache-main
-/.cache-tests
-
-# Atom
-.ensime
-.ensime_cache
-
-.DS_Store
-
-# application specific
-version.txt
-.env
