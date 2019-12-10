@@ -27,4 +27,32 @@ object Problem07 extends App {
 
   println(executeOrder.mkString)
 
+  var seconds = 0L
+  val delay = 60
+  val workers = 5
+
+  def executeTime(step: String): Int = step(0) - 'A' + 1 + delay
+  def canBePickedUp(step: String): Boolean = dependencies.filter(_._2 == step).forall(dependency => !executeOrder.contains(dependency._1))
+  val workerTasks: Array[Option[(String, Int)]] = Array.fill(workers)(None)
+
+  def newTask(): Option[(String, Int)] = executeOrder.find(task => canBePickedUp(task) && !workerTasks.flatMap(_.map(_._1)).contains(task)).map(task => task -> executeTime(task))
+
+  while(executeOrder.nonEmpty) {
+    seconds += 1
+    (0 until workers).foreach { worker =>
+      workerTasks.update(worker, workerTasks(worker) match {
+        case Some(task) if task._2 == 1 =>
+          executeOrder.dequeueFirst(_ == task._1)
+          newTask()
+        case Some(task) =>
+          Some(task._1 -> (task._2 - 1))
+        case None =>
+          newTask()
+      })
+    }
+    //println(s"$seconds ${workerTasks(0).getOrElse(".")} ${workerTasks(1).getOrElse(".")}")
+  }
+  println(seconds - 1)
+
+
 }
