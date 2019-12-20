@@ -69,5 +69,49 @@ object Problem20 extends App {
   }
   println(s"Shortest: ${solve(start)}")
 
+  def solve2(start: (Int, Int, Int)): Int = {
+    val toVisit: mutable.Queue[((Int, Int, Int), Int)] = mutable.Queue(start -> 0)
+    val beenTo: mutable.Set[(Int,Int, Int)] = mutable.Set(start)
+    var shortest = Int.MaxValue
+    def takeStep(elem: ((Int, Int, Int), Int)): Unit = {
+      val (newLocation, distance) = elem
+      val level = newLocation._3
+//      println(s"Visiting $newLocation")
+      for {
+        (x, y) <- List((-1,0),(1,0),(0,-1),(0,1))
+      } yield {
+        val afterStep = (newLocation._1+y, newLocation._2+x, newLocation._3)
+        if (afterStep._1 >= 0 && afterStep._2 >= 0 && afterStep._1 < height && afterStep._2 < width && !beenTo.contains(afterStep)) {
+          beenTo.add(afterStep)
+          world(afterStep._1)(afterStep._2) match {
+            case '.' => toVisit.enqueue(afterStep -> (distance + 1))
+            case '#' => //no-op
+            case _ =>
+//              println(s"Should be portal at $afterStep")
+              val portal = portals.find(p => p._1 == (afterStep._1 -> afterStep._2)).get
+              if (portal._3 != "AA") {
+                if (portal._3 == "ZZ") {
+                  if (newLocation._3 == 0) {
+                    shortest = distance
+                  }
+                } else {
+                  val isInner = afterStep._1 > 2 && afterStep._1 < height - 2 && afterStep._2 > 2 && afterStep._2 < width - 2
+                  if (afterStep._3 != 0 || isInner) {
+                    val otherSide = portals.find(p => p._3 == portal._3 && p != portal).get
+                    toVisit.enqueue((otherSide._2._1, otherSide._2._2, if (isInner) afterStep._3 + 1 else afterStep._3 - 1) -> (distance + 1))
+                    beenTo.add((otherSide._1._1, otherSide._1._2, if (isInner) afterStep._3 + 1 else afterStep._3 - 1))
+                  }
+                }
+              }
+          }
+        }
+      }
+    }
+    while (toVisit.nonEmpty && shortest == Int.MaxValue)
+      takeStep(toVisit.dequeue())
+    shortest
+  }
+  println(s"Shortest2: ${solve2((start._1, start._2, 0))}")
+
 
 }
