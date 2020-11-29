@@ -2,7 +2,8 @@ import scala.io.Source
 
 object Problem22 extends App {
 
-  val cards = 10007
+  val cards = 10
+//  val cards = 10007
   val deck = (0 until cards).toVector
   
   trait Operation {
@@ -35,12 +36,30 @@ object Problem22 extends App {
     }
   }
 
-  val operations = Source.fromResource("22-input.txt").getLines().map(Operation.apply).toVector
+  val operations = Source.fromResource("22-test.txt").getLines().map(Operation.apply).toVector
 
   val result = operations.foldLeft(deck)((deckSoFar, operation) => operation.shuffle(deckSoFar))
-  
-//  println(result)
-  
-  println(s"Card 2019 at ${result.indexOf(2019)}")
 
+  println(result)
+
+//  println(s"Card 2019 at ${result.indexOf(2019)}")
+
+  var i = 0L
+  var done = false
+  val stream = Stream.continually(operations).flatten.iterator
+  var newDeck = deck
+  while (!done) {
+    newDeck = stream.next().shuffle(newDeck)
+    i += 1L
+    if (newDeck == deck && i % operations.length == 0) {
+      done = true
+    }
+  }
+
+  println(s"Repeats after $i iterations => ${i / operations.length}")
+
+//  println(newDeck)
+
+
+  
 }

@@ -1,18 +1,19 @@
-import scala.collection.mutable
+import IntCodeProcessor2.{Halted, NeedsInput, Result, State}
 
-class IntCodeProcessor(register: Array[Long], input: mutable.Queue[Long] = mutable.Queue.empty, defaultInput: Option[Long] = None) {
+class IntCodeProcessor2(register: Array[Long]) {
   var position = 0
   var relativeBase = 0
   var done = false
 
   case class Instruction(parameters: Int, execute: Int => Unit, increasePosition: Boolean = true)
 
-  def run(): Long = {
+  def run(input: Option[Long] = None): State = {
+    var fetchableInput: Option[Long] = input
     val allInstructions = Map(
       1 -> Instruction(3, code => register(paramIndex(code, 3)) = paramValue(code, 1) + paramValue(code, 2)),
       2 -> Instruction(3, code => register(paramIndex(code,3)) = paramValue(code, 1) * paramValue(code, 2)),
-      3 -> Instruction(1, code => register(paramIndex(code, 1)) = if (input.nonEmpty) input.dequeue() else { println("Getting default input"); Thread.sleep(100); defaultInput.get }),
-      4 -> Instruction(1, code => { val result = paramValue(code, 1); position += 2; return result }),
+      3 -> Instruction(1, code => if (fetchableInput.isEmpty) return NeedsInput else { register(paramIndex(code, 1)) = fetchableInput.get; fetchableInput = None }),
+      4 -> Instruction(1, code => { val result = paramValue(code, 1); position += 2; return Result(result) }),
       5 -> Instruction(2, code => if (paramValue(code, 1) != 0L) position = paramValue(code, 2).toInt else position += 3, increasePosition = false),
       6 -> Instruction(2, code => if (paramValue(code, 1) == 0L) position = paramValue(code, 2).toInt else position += 3, increasePosition = false),
       7 -> Instruction(3, code => register(paramIndex(code, 3)) = if (paramValue(code, 1) < paramValue(code, 2)) 1 else 0),
@@ -29,7 +30,7 @@ class IntCodeProcessor(register: Array[Long], input: mutable.Queue[Long] = mutab
         position += instruction.parameters + 1
     }
 
-    Long.MinValue
+    Halted
   }
 
   private def paramValue(code: Int, parameter: Int): Long = register(paramIndex(code, parameter))
@@ -41,4 +42,11 @@ class IntCodeProcessor(register: Array[Long], input: mutable.Queue[Long] = mutab
       case 2 => relativeBase + register(position + parameter).toInt
     }
   }
+}
+
+object IntCodeProcessor2 {
+  sealed trait State
+  case class Result[A](value: A) extends State
+  object NeedsInput extends State
+  object Halted extends State
 }
