@@ -10,4 +10,6 @@ lazy val aoc2018 = project in file("2018")
 
 lazy val aoc2019 = project in file("2019")
 
-lazy val aoc2020 = project in file("2020")
+lazy val aoc2020 = (project in file("2020")).settings(
+  libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2")
+)
