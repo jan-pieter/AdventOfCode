@@ -2,77 +2,76 @@ import scala.io.Source
 
 object Problem24 extends App {
 
-  val input = Source.fromResource("24-test.txt").getLines().toList
+  val input = Source.fromResource("24-input.txt").getLines().toList
 
-  val size = 128
-  val board: Array[Array[Array[Boolean]]] = Array.fill(size, size, size)(true)
-  val startX, startY, startZ = size / 2
+  val size = 2048
+  val board: Array[Array[Boolean]] = Array.fill(size, size)(true)
+  val startQ, startR = size / 2
 
   input.foreach { inLine =>
-    var current: (Int, Int, Int) = (startX, startY, startZ)
+    var current: (Int, Int) = (startQ, startR)
     var lineIndex = 0
     val line = inLine + " "
     while (lineIndex < inLine.length) {
       line.slice(lineIndex, lineIndex + 2) match {
         case "se" =>
-          current = (current._1, current._2 - 1, current._3 + 1)
+          current = (current._1, current._2 + 1)
           lineIndex = lineIndex + 2
         case "sw" =>
-          current = (current._1 - 1, current._2, current._3 + 1)
+          current = (current._1 - 1, current._2 + 1)
           lineIndex = lineIndex + 2
         case "ne" =>
-          current = (current._1 + 1, current._2, current._3 - 1)
+          current = (current._1 + 1, current._2 - 1)
           lineIndex = lineIndex + 2
         case "nw" =>
-          current = (current._1, current._2 + 1, current._3 - 1)
+          current = (current._1, current._2 - 1)
           lineIndex = lineIndex + 2
         case other if other.head == 'e' =>
-          current = (current._1 + 1, current._2 - 1, current._3)
+          current = (current._1 + 1, current._2)
           lineIndex = lineIndex + 1
         case other if other.head == 'w' =>
-          current = (current._1 - 1, current._2 + 1, current._3)
+          current = (current._1 - 1, current._2)
           lineIndex = lineIndex + 1
       }
     }
-    board(current._3)(current._2)(current._1) = !board(current._3)(current._2)(current._1)
+    board(current._1)(current._2) = !board(current._1)(current._2)
   }
 
-  def blackTiles(board: Array[Array[Array[Boolean]]]): Int = board.map(_.map(_.map {
+  def blackTiles(board: Array[Array[Boolean]]): Int = board.map(_.map {
     case false => 1
     case true => 0
-  }.sum).sum).sum
+  }.sum).sum
 
-  def safeBlack(board: Array[Array[Array[Boolean]]], x: Int, y: Int, z: Int): Int = {
-    if (z > 0 && z < board.length && y > 0 && y < board.length && x > 0 && x < board.length)
-      if (board(z)(y)(x)) 0 else 1
+  def safeBlack(board: Array[Array[Boolean]], q: Int, r: Int): Int = {
+    if (q > 0 && q < board.length && r > 0 && r < board.length)
+      if (board(q)(r)) 0 else 1
     else
       0
   }
 
-  def blackNeighbors(board: Array[Array[Array[Boolean]]], x: Int, y: Int, z: Int): Int = {
-    safeBlack(board, x, y+1, z-1) + safeBlack(board, x+1, y, z-1) + safeBlack(board, x+1, y-1, z) +
-      safeBlack(board, x, y-1, z+1) + safeBlack(board, x-1, y, z+1) + safeBlack(board, x-1, y+1, z)
+  def blackNeighbors(board: Array[Array[Boolean]], q: Int, r: Int): Int = {
+    safeBlack(board, q, r-1) + safeBlack(board, q+1, r-1) + safeBlack(board, q+1, r) +
+      safeBlack(board, q, r+1) + safeBlack(board, q-1, r+1) + safeBlack(board, q-1, r)
   }
 
   println(blackTiles(board))
 
-  val endBoard = (0 until 10).foldLeft(board) {
+  val endBoard = (0 until 100).foldLeft(board) {
     case (prevBoard, _) =>
-      val newBoard = Array.fill[Boolean](size, size, size)(true)
+      val newBoard = Array.fill[Boolean](size, size)(true)
       for {
-        y <- newBoard.indices
-        x <- newBoard.indices
+        q <- newBoard.indices
+        r <- newBoard.indices
       } yield {
-        val z = 0 - (x + y)
-        val black = blackNeighbors(prevBoard, x, y, z)
-        if (prevBoard(z)(y)(x) && black == 2)
-          newBoard(z)(y)(x) = false
-        else if (!prevBoard(z)(y)(x) && (black == 0 || black > 2))
-          newBoard(z)(y)(x) = true
+        val black = blackNeighbors(prevBoard, q, r)
+        if (prevBoard(q)(r) && black == 2)
+          newBoard(q)(r) = false
+        else if (!prevBoard(q)(r) && (black == 0 || black > 2))
+          newBoard(q)(r) = true
         else
-          newBoard(z)(y)(x) = prevBoard(z)(y)(x)
+          newBoard(q)(r) = prevBoard(q)(r)
       }
-      println(blackTiles(newBoard))
+      //println(blackTiles(newBoard))
       newBoard
   }
 
