@@ -49,7 +49,7 @@ object Problem22 extends App {
     while (deck1.nonEmpty && deck2.nonEmpty) {
       val stateStr = s"${deck1.mkString(",")} ${deck2.mkString(",")}"
       if (states.contains(stateStr)) {
-        deck1.enqueue(deck2.dequeueAll(_ => true): _*)
+        deck1.enqueueAll(deck2.dequeueAll(_ => true))
       } else {
         states.add(stateStr)
         val card1 = deck1.dequeue()

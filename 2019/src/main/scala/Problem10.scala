@@ -9,7 +9,7 @@ object Problem10 extends App {
   def gcd(x: Int, y: Int): Int = {
     val bigX = BigInt(x)
     val bigY = BigInt(y)
-    bigX.gcd(bigY).intValue()
+    bigX.gcd(bigY).intValue
   }
 
   def detectedAsteroids(x: Int, y: Int): Int = {

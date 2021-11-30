@@ -1,3 +1,4 @@
+import java.util.Objects
 import scala.io.Source
 
 object Problem11 extends App {
@@ -84,7 +85,7 @@ object Problem11 extends App {
 //  newMap.foreach(line => println(line.mkString("")))
 //  println("")
 
-  while(currentMap.deep != newMap.deep) {
+  while(!Objects.deepEquals(currentMap, newMap)) {
     currentMap = newMap
     newMap = iterate(currentMap)
 //    newMap.foreach(line => println(line.mkString("")))
@@ -103,7 +104,7 @@ object Problem11 extends App {
 //  newMap.foreach(line => println(line.mkString("")))
 //  println("")
 
-  while(currentMap.deep != newMap.deep) {
+  while(!Objects.deepEquals(currentMap, newMap)) {
     currentMap = newMap
     newMap = iterate2(currentMap)
 //    newMap.foreach(line => println(line.mkString("")))

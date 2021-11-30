@@ -18,7 +18,7 @@ object Problem14 extends App {
   }
 
   def to36Bit(value: Long): String = value.toBinaryString.reverse.padTo(36, '0').reverse
-  def from36Bit(str: String): Long = BigInt(str, 2).longValue()
+  def from36Bit(str: String): Long = BigInt(str, 2).longValue
   def applyMask(str: String, mask: String): String = {
     mask.zip(str).map {
       case ('X', i) => i
