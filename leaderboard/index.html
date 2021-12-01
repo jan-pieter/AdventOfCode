@@ -1,0 +1,46 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Per day</title>
+<script src="https://cdn.jsdelivr.net/npm/underscore@1.12.0/underscore-min.js" type="text/javascript" language="javascript"></script>
+<style>
+html { font-family: courier; background-color: black; color: white; }
+td { vertical-align: top; }
+</style>
+<head>
+<body>
+<table id="output"></table>
+<script>
+function formatNumber(n) {
+  return n.toLocaleString('nl-NL', { minimumIntegerDigits:2, minimumFractionDigits:0, useGrouping:false });
+}
+
+function callBack(json) {
+  var out = "";
+  var members = Object.values(json.members);
+  var maxDay = _.max(_.map(members, function(member) { return _.max(_.map(Object.keys(member.completion_day_level), function(key) { return parseInt(key, 10); })) }));
+  for(var i = maxDay; i > 0; i--) {
+    out += '<tr><td colspan="2"><h2>Day ' + i + "</h2></td></tr>";
+    var solved1 = _.filter(members, function(member) { return member.completion_day_level.hasOwnProperty("" + i) && member.completion_day_level[i].hasOwnProperty("1"); });
+    var star1 = _.sortBy(solved1, function(member) { return member.completion_day_level["" + i]["1"].get_star_ts; });
+    out += "<tr><td><h3>Part 1</h3>";
+    _.each(star1, function(member) { out += new Date(member.completion_day_level[""+i]["1"].get_star_ts * 1000).toLocaleString("nl-NL") + " " + member.name + "<br>"; });
+    out += "</td>";
+
+    var solved2 = _.filter(members, function(member) { return member.completion_day_level.hasOwnProperty("" + i) && member.completion_day_level[i].hasOwnProperty("2"); });
+    var star2 = _.sortBy(solved2, function(member) { return member.completion_day_level["" + i]["2"].get_star_ts; });
+    out += "<td><h3>Part 2</h3>";
+    _.each(star2, function(member) {
+      var diff = member.completion_day_level[""+i]["2"].get_star_ts - member.completion_day_level[""+i]["1"].get_star_ts;
+      var diffString = formatNumber(Math.floor(diff/3600)) + ":" + formatNumber(Math.floor((diff % 3600)/60)) + ":" + formatNumber(diff % 60);
+      out += new Date(member.completion_day_level[""+i]["2"].get_star_ts * 1000).toLocaleString("nl-NL") + " " + member.name + " (+" + diffString + ")<br>";
+    });
+    out += "</td></tr>";
+
+  }
+  document.getElementById("output").innerHTML = out;
+}
+</script>
+<script src="400015-2021.js" type="text/javascript" language="javascript"></script>
+</body>
+</html>
