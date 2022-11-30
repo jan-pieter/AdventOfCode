@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 BOARD=400015
 YEAR=2022

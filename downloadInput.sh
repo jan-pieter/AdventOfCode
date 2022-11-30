@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 YEAR=2022
 DAY=1
