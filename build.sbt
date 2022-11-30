@@ -6,7 +6,7 @@ val commonSettings = Seq(
   scalaVersion := "3.2.1"
 )
 
-lazy val root = (project in file(".")).settings(commonSettings).aggregate(aoc2017, aoc2018, aoc2019, aoc2020, aoc2021)
+lazy val root = (project in file(".")).settings(commonSettings).aggregate(aoc2017, aoc2018, aoc2019, aoc2020, aoc2021, aoc2022)
 
 lazy val aoc2017 = (project in file("2017")).settings(commonSettings)
 
@@ -21,3 +21,5 @@ lazy val aoc2020 = (project in file("2020")).settings(commonSettings).settings(
 lazy val aoc2021 = (project in file("2021")).settings(commonSettings).settings(
   libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4")
 )
+
+lazy val aoc2022 = (project in file("2022")).settings(commonSettings)
