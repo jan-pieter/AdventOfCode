@@ -32,6 +32,6 @@ object Problem10 extends App:
   val solution2 = (1 to 240).map { i =>
     val pixel = (i - 1) % 40
     val register = atCycle(i)
-    if (pixel == register - 1 || pixel == register || pixel == register +1) '#' else '.'
+    if (pixel == register - 1 || pixel == register || pixel == register +1) '█' else ' '
   }
   solution2.grouped(40).foreach(line => println(line.mkString))
