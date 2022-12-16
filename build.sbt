@@ -22,4 +22,6 @@ lazy val aoc2021 = (project in file("2021")).settings(commonSettings).settings(
   libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4")
 )
 
-lazy val aoc2022 = (project in file("2022")).settings(commonSettings)
+lazy val aoc2022 = (project in file("2022")).settings(commonSettings).settings(
+  libraryDependencies ++= Seq("org.scala-graph" % "graph-core_2.13" % "1.13.5")
+)

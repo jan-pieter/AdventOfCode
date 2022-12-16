@@ -1,7 +1,7 @@
 #!/bin/bash
 
 YEAR=2022
-DAY=15
+DAY=16
 
 formatted_day=$(printf "%02d" $DAY)
 
