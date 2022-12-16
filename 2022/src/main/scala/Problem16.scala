@@ -8,7 +8,7 @@ import scala.io.Source
 
 object Problem16 extends App:
   case class Room(name: String, flow: Long, tunnels: Vector[String])
-  val input = Source.fromResource("16-test.txt").getLines().toVector.map {
+  val input = Source.fromResource("16-input.txt").getLines().toVector.map {
     case s"Valve $name has flow rate=$flow; tunnel leads to valve $tunnel" => name -> Room(name, flow.toLong, Vector(tunnel))
     case s"Valve $name has flow rate=$flow; tunnels lead to valves $tunnels" => name -> Room(name, flow.toLong, tunnels.split(", ").toVector)
   }.toMap
@@ -29,20 +29,20 @@ object Problem16 extends App:
   def stepsTo(from: String, to: String): Int = cache.getOrElseUpdate((from, to), {
     val length = graph.get(from).shortestPathTo(graph.get(to)).get.nodes.size - 1
 //    println(s"$from $to $length")
-    length
+    length + 1
   })
 
   def nextStep(state: State): Vector[State] = {
-    state.closedValves.toVector.filter(valve => stepsTo(state.room, valve) < state.minutesLeft).map { valve =>
-      val s = state.copy(room = valve, minutesLeft = state.minutesLeft - (stepsTo(state.room, valve) + 1), closedValves = state.closedValves - valve, input(valve).flow)
+    state.closedValves.toVector.filter(valve => stepsTo(state.room, valve) <= state.minutesLeft).map { valve =>
+      val s = state.copy(room = valve, minutesLeft = state.minutesLeft - stepsTo(state.room, valve), closedValves = state.closedValves - valve, input(valve).flow)
       s.copy(nextStates = nextStep(s))
     }
   }
-  var printed = 0
   val start = State("AA", 30, usefulValves, 0L, Vector.empty)
   val solution1 = start.copy(nextStates = nextStep(start))
   println("Determined solution")
   println(solution1.score)
+//  sys.exit(1)
 
 //  case class State3()
 
@@ -59,18 +59,18 @@ object Problem16 extends App:
   def nextStep2(state: State2): Vector[State2] = {
     if (state.room._2 == 0 && state.elephant._2 == 0) {
       // both take a step
-      val meOptions = state.closedValves.filter(valve => stepsTo(state.room._1, valve) < state.minutesLeft)
-      val elephantOptions = state.closedValves.filter(valve => stepsTo(state.elephant._1, valve) < state.minutesLeft)
+      val meOptions = state.closedValves.filter(valve => stepsTo(state.room._1, valve) <= state.minutesLeft)
+      val elephantOptions = state.closedValves.filter(valve => stepsTo(state.elephant._1, valve) <= state.minutesLeft)
       if (elephantOptions.isEmpty && meOptions.isEmpty) {
         Vector.empty
       } else if (elephantOptions.isEmpty || (meOptions.size == 1 && meOptions == elephantOptions)) {
         val nextMe = meOptions.head
         // Only I can take a step
-        Vector(state.copy(room = nextMe -> 0, minutesLeft = state.minutesLeft - (stepsTo(state.room._1, nextMe) + 1), closedValves = state.closedValves - nextMe, input(nextMe).flow, nextStates = Vector.empty))
+        Vector(state.copy(room = nextMe -> 0, minutesLeft = state.minutesLeft - stepsTo(state.room._1, nextMe), closedValves = state.closedValves - nextMe, input(nextMe).flow, nextStates = Vector.empty))
       } else if (meOptions.isEmpty) {
         // Only Elephant can take a step
         val nextElephant = elephantOptions.head
-        Vector(state.copy(elephant = nextElephant -> 0, minutesLeft = state.minutesLeft - (stepsTo(state.elephant._1, nextElephant) + 1), closedValves = state.closedValves - nextElephant, input(nextElephant).flow, nextStates = Vector.empty))
+        Vector(state.copy(elephant = nextElephant -> 0, minutesLeft = state.minutesLeft - stepsTo(state.elephant._1, nextElephant), closedValves = state.closedValves - nextElephant, input(nextElephant).flow, nextStates = Vector.empty))
       } else {
         (for {
           nextMe <- meOptions
@@ -79,18 +79,18 @@ object Problem16 extends App:
         } yield {
           val mySteps = stepsTo(state.room._1, nextMe)
           val elephantSteps = stepsTo(state.elephant._1, nextElephant)
-          Option.when(mySteps < state.minutesLeft && elephantSteps < state.minutesLeft)(
+          Option.when(mySteps <= state.minutesLeft && elephantSteps <= state.minutesLeft)(
             if (mySteps == elephantSteps) {
               // Both at target
-              val s = state.copy(room = nextMe -> 0, elephant = nextElephant -> 0, minutesLeft = state.minutesLeft - (mySteps + 1), closedValves = state.closedValves - nextMe - nextElephant, input(nextMe).flow + input(nextElephant).flow)
+              val s = state.copy(room = nextMe -> 0, elephant = nextElephant -> 0, minutesLeft = state.minutesLeft - mySteps, closedValves = state.closedValves - nextMe - nextElephant, input(nextMe).flow + input(nextElephant).flow)
               s.copy(nextStates = nextStep2(s))
             } else if (mySteps < elephantSteps) {
               // I'm first at my target
-              val s = state.copy(room = nextMe -> 0, elephant = nextElephant -> (elephantSteps - (mySteps + 1)), minutesLeft = state.minutesLeft - (mySteps + 1), closedValves = state.closedValves - nextMe, input(nextMe).flow)
+              val s = state.copy(room = nextMe -> 0, elephant = nextElephant -> (elephantSteps - mySteps), minutesLeft = state.minutesLeft - mySteps, closedValves = state.closedValves - nextMe, input(nextMe).flow)
               s.copy(nextStates = nextStep2(s))
             } else {
               // Elephant first at target
-              val s = state.copy(room = nextMe -> (mySteps - (elephantSteps + 1)), elephant = nextElephant -> 0, minutesLeft = state.minutesLeft - (elephantSteps + 1), closedValves = state.closedValves - nextElephant, input(nextElephant).flow)
+              val s = state.copy(room = nextMe -> (mySteps - elephantSteps), elephant = nextElephant -> 0, minutesLeft = state.minutesLeft - elephantSteps, closedValves = state.closedValves - nextElephant, input(nextElephant).flow)
               s.copy(nextStates = nextStep2(s))
             }
           )
@@ -100,36 +100,36 @@ object Problem16 extends App:
       (state.closedValves - state.room._1 - state.elephant._1).toVector.flatMap { valve =>
         if (state.room._2 == 0) { // I need to pick a new target
           val mySteps = stepsTo(state.room._1, valve)
-          Option.when(mySteps < state.minutesLeft)(
+          Option.when(mySteps <= state.minutesLeft)(
             if (mySteps == state.elephant._2) {
               // Both at target
-              val s = state.copy(room = valve -> 0, elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - (mySteps + 1), closedValves = state.closedValves - valve - state.elephant._1, input(valve).flow + input(state.elephant._1).flow)
+              val s = state.copy(room = valve -> 0, elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - mySteps, closedValves = state.closedValves - valve - state.elephant._1, input(valve).flow + input(state.elephant._1).flow)
               s.copy(nextStates = nextStep2(s))
             } else if (mySteps < state.elephant._2) {
               // I'm first at my target
-              val s = state.copy(room = valve -> 0, elephant = state.elephant._1 -> (state.elephant._2 - (mySteps + 1)), minutesLeft = state.minutesLeft - (mySteps + 1), closedValves = state.closedValves - valve, input(valve).flow)
+              val s = state.copy(room = valve -> 0, elephant = state.elephant._1 -> (state.elephant._2 - mySteps), minutesLeft = state.minutesLeft - mySteps, closedValves = state.closedValves - valve, input(valve).flow)
               s.copy(nextStates = nextStep2(s))
             } else {
               // Elephant first at target
-              val s = state.copy(room = valve -> (mySteps - (state.elephant._2 + 1)), elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - (state.elephant._2 + 1), closedValves = state.closedValves - state.elephant._1, input(state.elephant._1).flow)
+              val s = state.copy(room = valve -> (mySteps - state.elephant._2), elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - state.elephant._2, closedValves = state.closedValves - state.elephant._1, input(state.elephant._1).flow)
               s.copy(nextStates = nextStep2(s))
             }
           )
         } else { // Elephant needs to pick a new target
           require(state.elephant._2 == 0, s"Elephant ${state.elephant._2} != 0")
           val elephantSteps = stepsTo(state.elephant._1, valve)
-          Option.when(elephantSteps < state.minutesLeft)(
+          Option.when(elephantSteps <= state.minutesLeft)(
             if (elephantSteps == state.room._2) {
               // Both at target
-              val s = state.copy(room = state.room._1 -> 0, elephant = valve -> 0, minutesLeft = state.minutesLeft - (elephantSteps + 1), closedValves = state.closedValves - state.room._1 - valve, input(state.room._1).flow + input(valve).flow)
+              val s = state.copy(room = state.room._1 -> 0, elephant = valve -> 0, minutesLeft = state.minutesLeft - elephantSteps, closedValves = state.closedValves - state.room._1 - valve, input(state.room._1).flow + input(valve).flow)
               s.copy(nextStates = nextStep2(s))
             } else if (elephantSteps > state.room._2) {
               // I'm first at my target
-              val s = state.copy(room = state.room._1 -> 0, elephant = valve -> (elephantSteps - (state.room._2 + 1)), minutesLeft = state.minutesLeft - (state.room._2 + 1), closedValves = state.closedValves - state.room._1, input(state.room._1).flow)
+              val s = state.copy(room = state.room._1 -> 0, elephant = valve -> (elephantSteps - state.room._2), minutesLeft = state.minutesLeft - state.room._2, closedValves = state.closedValves - state.room._1, input(state.room._1).flow)
               s.copy(nextStates = nextStep2(s))
             } else {
               // Elephant first at target
-              val s = state.copy(room = state.room._1 -> (elephantSteps - (state.elephant._2 + 1)), elephant = valve -> 0, minutesLeft = state.minutesLeft - (elephantSteps + 1), closedValves = state.closedValves - valve, input(valve).flow)
+              val s = state.copy(room = state.room._1 -> (elephantSteps - state.elephant._2), elephant = valve -> 0, minutesLeft = state.minutesLeft - elephantSteps, closedValves = state.closedValves - valve, input(valve).flow)
               s.copy(nextStates = nextStep2(s))
             }
           )
