@@ -8,7 +8,7 @@ import scala.io.Source
 
 object Problem16 extends App:
   case class Room(name: String, flow: Long, tunnels: Vector[String])
-  val input = Source.fromResource("16-input.txt").getLines().toVector.map {
+  val input = Source.fromResource("16-test.txt").getLines().toVector.map {
     case s"Valve $name has flow rate=$flow; tunnel leads to valve $tunnel" => name -> Room(name, flow.toLong, Vector(tunnel))
     case s"Valve $name has flow rate=$flow; tunnels lead to valves $tunnels" => name -> Room(name, flow.toLong, tunnels.split(", ").toVector)
   }.toMap
@@ -53,7 +53,12 @@ object Problem16 extends App:
 //    println(this)
 //    printed += 1
 //    if (printed >= 100) sys.exit(1)
-    override def toString: String = s"State(room: $room, elephant: $elephant minutesLeft: $minutesLeft, closedValves: $closedValves)\n" + nextStates.maxByOption(_.score).map(_.toString).getOrElse("END")
+    override def toString: String = if (room._1 == "AA" && elephant._1 == "AA") {
+      s"State(room: $room, elephant: $elephant minutesLeft: $minutesLeft, closedValves: $closedValves)\n" + nextStates.filter(state => state.room._1 == "JJ" && state.elephant._1 == "DD").map(_.toString).mkString
+    }  else {
+      s"State(room: $room, elephant: $elephant minutesLeft: $minutesLeft, closedValves: $closedValves)\n" + nextStates.maxByOption(_.score).map(_.toString).getOrElse("END")
+    }
+
   }
 
   def nextStep2(state: State2): Vector[State2] = {
@@ -97,7 +102,7 @@ object Problem16 extends App:
         }).flatten.toVector
       }
     } else {
-      (state.closedValves - state.room._1 - state.elephant._1).toVector.flatMap { valve =>
+      val r = (state.closedValves - state.room._1 - state.elephant._1).toVector.flatMap { valve =>
         if (state.room._2 == 0) { // I need to pick a new target
           val mySteps = stepsTo(state.room._1, valve)
           Option.when(mySteps <= state.minutesLeft)(
@@ -134,6 +139,23 @@ object Problem16 extends App:
             }
           )
         }
+      }
+      if (r.nonEmpty) {
+        r
+      } else if (state.room._2 > 0 && state.room._2 == state.elephant._2){
+        Vector(state.copy(room = state.room._1 -> 0, elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - state.room._2, closedValves = state.closedValves - state.room._1 - state.elephant._1, input(state.room._1).flow + input(state.elephant._1).flow, Vector.empty))
+      } else if (state.room._2 > 0 && state.elephant._2 > 0 && state.room._2 > state.elephant._2){
+        val s = state.copy(room = state.room._1 -> (state.room._2 - state.elephant._2), elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - state.elephant._2, closedValves = state.closedValves - state.elephant._1, input(state.elephant._1).flow, Vector.empty)
+        Vector(s.copy(nextStates = nextStep2(s)))
+      } else if (state.room._2 > 0 && state.room._2 < state.elephant._2) {
+        val s = state.copy(room = state.room._1 -> 0, elephant = state.elephant._1 -> (state.elephant._2 - state.room._2), minutesLeft = state.minutesLeft - state.room._2, closedValves = state.closedValves - state.room._1, input(state.room._1).flow, Vector.empty)
+        Vector(s.copy(nextStates = nextStep2(s)))
+      } else if (state.room._2 > 0) {
+        Vector(state.copy(room = state.room._1 -> 0, minutesLeft = state.minutesLeft - state.room._2, closedValves = state.closedValves - state.room._1, input(state.room._1).flow, Vector.empty))
+      } else if (state.elephant._2 > 0) {
+        Vector(state.copy(elephant = state.elephant._1 -> 0, minutesLeft = state.minutesLeft - state.elephant._2, closedValves = state.closedValves - state.elephant._1, input(state.elephant._1).flow, Vector.empty))
+      } else {
+        r
       }
     }
   }
