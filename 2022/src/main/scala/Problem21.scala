@@ -19,17 +19,17 @@ object Problem21 extends App:
   }
 
   case class Monkey(id: String, number: MonkeyNumber) {
-    lazy val realValue: Either[Long, Long => Long] = (id, number) match {
-      case ("humn", _) => Right(identity)
+    lazy val realValue: Long | (Long => Long) = (id, number) match {
+      case ("humn", _) => identity
       case ("root", MonkeyOp(ref1, _, ref2, _, _)) => (monkeys(ref1).realValue, monkeys(ref2).realValue) match {
-        case (Left(number), Right(f)) => Left(f(number))
-        case (Right(f), Left(number)) => Left(f(number))
+        case (number: Long, f: (Long => Long)) => f(number)
+        case (f: (Long => Long), number: Long) => f(number)
       }
-      case (_, MonkeyVal(value)) => Left(value)
+      case (_, MonkeyVal(value)) => value
       case (_, MonkeyOp(ref1, op, ref2, invOpLeft, invOpRight)) => (monkeys(ref1).realValue, monkeys(ref2).realValue) match {
-        case (Left(number), Left(number2)) => Left(op(number, number2))
-        case (Left(number), Right(f)) => Right(x => f(invOpRight(x, number)))
-        case (Right(f), Left(number)) => Right(x => f(invOpLeft(x, number)))
+        case (number: Long, number2: Long) => op(number, number2)
+        case (number: Long, f: (Long => Long)) => x => f(invOpRight(x, number))
+        case (f: (Long => Long), number: Long) => x => f(invOpLeft(x, number))
       }
     }
   }
