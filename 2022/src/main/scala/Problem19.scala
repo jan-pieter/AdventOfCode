@@ -40,7 +40,8 @@ object Problem19 extends App:
         val newClay = state.clay + state.clayRobots
         val newObsidian = state.obsidian + state.obsidianRobots
         val newGeode = state.geode + state.geodeRobots
-        val oreStillUseful = newOre < List(clayRobotOreCost, obsidianRobotOreCost, geodeRobotOreCost).max * state.minutesLeft
+        val maxOreNeeded = List(clayRobotOreCost, obsidianRobotOreCost, geodeRobotOreCost).max
+        val oreStillUseful = newOre < maxOreNeeded * state.minutesLeft && state.oreRobots < maxOreNeeded
         val clayStillUseful = newClay + state.clayRobots * state.minutesLeft + (0 until state.minutesLeft).sum > obsidianRobotClayCost
         val obsidianStillUseful = newObsidian + state.obsidianRobots * state.minutesLeft + (0 until state.minutesLeft).sum > geodeRobotObsidianCost
         if (state.ore >= geodeRobotOreCost && state.obsidian >= geodeRobotObsidianCost) {
@@ -67,13 +68,19 @@ object Problem19 extends App:
     }
   }
 
-  val input = Source.fromResource("19-test.txt").getLines().toVector.par.map {
+  val input = Source.fromResource("19-input.txt").getLines().toVector.par.map {
     case s"Blueprint $id: Each ore robot costs $oreRobotOreCost ore. Each clay robot costs $clayRobotOreCost ore. Each obsidian robot costs $obsidianRobotOreCost ore and $obsidianRobotClayCost clay. Each geode robot costs $geodeRobotOreCost ore and $geodeRobotObsidianCost obsidian." =>
       Blueprint(id.toInt, oreRobotOreCost.toInt, clayRobotOreCost.toInt, obsidianRobotOreCost.toInt, obsidianRobotClayCost.toInt, geodeRobotOreCost.toInt, geodeRobotObsidianCost.toInt)
   }
 
+//  val start = System.nanoTime()
 //  val solution1 = input.map(_.quality).sum
-//  println(solution1)
+//  val duration = (System.nanoTime() - start) / 1000000000L
+//  println(s"Duration part 1: $duration seconds")
+//  println(s"Solution 1: $solution1")
 
+  val start2 = System.nanoTime()
   val solution2 = input.take(3).map(_.geodes).product
-  println(solution2)
+  val duration2 = (System.nanoTime() - start2) / 1000000000L
+  println(s"Duration part 2: $duration2 seconds")
+  println(s"Solution 2: $solution2")
