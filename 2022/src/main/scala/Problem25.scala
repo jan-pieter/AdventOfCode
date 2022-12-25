@@ -13,6 +13,7 @@ object Problem25 extends App:
     s.reverse.zipWithIndex.map((c, i) => toDecimal(c) * scala.math.pow(5, i).toLong).sum
   }
 
+  val snafuChars: Vector[String] = Vector("0", "1", "2", "=", "-")
   def toSnafu(i: Long): String = {
     val x = i % 5
     val toAdd = x match {
@@ -21,9 +22,9 @@ object Problem25 extends App:
     }
     val newSnafu = i / 5 + toAdd
     if (newSnafu > 0)
-      toSnafu(i / 5 + toAdd) + ("0", "1", "2", "=", "-").productElement(x.toInt)
+      toSnafu(newSnafu) + snafuChars(x.toInt)
     else
-      ("0", "1", "2", "=", "-").productElement(x.toInt).toString
+      snafuChars(x.toInt)
   }
 
   val solution1 = input.map(toDecimal).sum
