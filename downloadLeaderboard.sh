@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BOARD=400015
-YEAR=2022
+YEAR=2023
 
 filename="./leaderboard/$BOARD-$YEAR.js"
 

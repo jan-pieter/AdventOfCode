@@ -13,3 +13,4 @@ project/plugins/project/
 # IDEA InteliJ
 .idea/*
 .idea_modules/*
+.bsp/*
