@@ -3,9 +3,6 @@ import scala.io.Source
 object Problem05 extends App:
   val maxValue: Long = Long.MaxValue / 10
   case class MapRange(destination: Long, source: Long, length: Long) {
-    def contains(other: MapRange): Boolean = {
-      source <= other.destination && other.length <= length - (other.destination - source)
-    }
     def overlap(sourceRange: MapRange): MapRange = {
       if (sourceRange.destination <= source) {
         val sourceLengthLeft = sourceRange.length - (source - sourceRange.destination)
