@@ -1,10 +1,27 @@
-import java.text.NumberFormat.Field
 import scala.io.Source
 
 object Problem23 extends App:
   val input = Source.fromResource("23-input.txt").getLines().toVector
 
-  case class Position(x: Long, y: Long)
+  case class Position(x: Long, y: Long) {
+    def surrounding: Vector[Position] = (for {
+      xDiff <- -1 to 1
+      yDiff <- -1 to 1
+      if xDiff != 0 && yDiff != 0
+    } yield Position(x + xDiff, y + yDiff)).toVector
+    def adjacent(direction: Direction): Vector[Position] = (direction match {
+      case Direction.N => for { xDiff <- -1 to 1 } yield Position(x + xDiff, y - 1)
+      case Direction.S => for { xDiff <- -1 to 1 } yield Position(x + xDiff, y + 1)
+      case Direction.E => for { yDiff <- -1 to 1 } yield Position(x + 1, y + yDiff)
+      case Direction.W => for { yDiff <- -1 to 1 } yield Position(x - 1, y + yDiff)
+    }).toVector
+    def next(direction: Direction): Position = direction match {
+      case Direction.N => copy(y = y - 1)
+      case Direction.S => copy(y = y + 1)
+      case Direction.E => copy(x = x + 1)
+      case Direction.W => copy(x = x - 1)
+    }
+  }
   case class Elf(position: Position, nextPosition: Position)
   enum Direction:
     case N, E, S, W
@@ -34,33 +51,13 @@ object Problem23 extends App:
 //    println(s"Round $i $directions")
     val byPos = elves.groupBy(_.position)
     val elvesWithPos = elves.map { elf =>
-      if (byPos.contains(Position(elf.position.x - 1, elf.position.y - 1)) || byPos.contains(Position(elf.position.x, elf.position.y - 1)) ||
-        byPos.contains(Position(elf.position.x + 1, elf.position.y - 1)) || byPos.contains(Position(elf.position.x - 1, elf.position.y)) ||
-        byPos.contains(Position(elf.position.x + 1, elf.position.y)) || byPos.contains(Position(elf.position.x - 1, elf.position.y + 1)) ||
-        byPos.contains(Position(elf.position.x, elf.position.y + 1)) || byPos.contains(Position(elf.position.x + 1, elf.position.y + 1))
-      ) {
-        elf.copy(nextPosition = directions.flatMap {
-          case Direction.N => Option.when(
-            !byPos.contains(Position(elf.position.x - 1, elf.position.y - 1)) &&
-              !byPos.contains(Position(elf.position.x, elf.position.y - 1)) &&
-              !byPos.contains(Position(elf.position.x + 1, elf.position.y - 1))
-          )(elf.position.copy(y = elf.position.y - 1))
-          case Direction.S => Option.when(
-            !byPos.contains(Position(elf.position.x - 1, elf.position.y + 1)) &&
-              !byPos.contains(Position(elf.position.x, elf.position.y + 1)) &&
-              !byPos.contains(Position(elf.position.x + 1, elf.position.y + 1))
-          )(elf.position.copy(y = elf.position.y + 1))
-          case Direction.E => Option.when(
-            !byPos.contains(Position(elf.position.x + 1, elf.position.y - 1)) &&
-              !byPos.contains(Position(elf.position.x + 1, elf.position.y)) &&
-              !byPos.contains(Position(elf.position.x + 1, elf.position.y + 1))
-          )(elf.position.copy(x = elf.position.x + 1))
-          case Direction.W => Option.when(
-            !byPos.contains(Position(elf.position.x - 1, elf.position.y - 1)) &&
-              !byPos.contains(Position(elf.position.x - 1, elf.position.y)) &&
-              !byPos.contains(Position(elf.position.x - 1, elf.position.y + 1))
-          )(elf.position.copy(x = elf.position.x - 1))
-        }.headOption.getOrElse(elf.position))
+      if (elf.position.surrounding.exists(byPos.contains)) {
+        elf.copy(
+          nextPosition = directions
+            .flatMap(direction => Option.when(!elf.position.adjacent(direction).exists(byPos.contains))(elf.position.next(direction)))
+            .headOption
+            .getOrElse(elf.position)
+        )
       } else elf.copy(nextPosition = elf.position)
     }
     val byNextPos = elvesWithPos.groupBy(_.nextPosition)
