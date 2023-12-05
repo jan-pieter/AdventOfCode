@@ -40,7 +40,7 @@ object Problem05 extends App:
         case Vector(start, length) => MapRange(start, start, length)
       }.toVector
       sequence.foldLeft(seedRanges) { (ranges, item) =>
-        println(s"$item: ${ranges.mkString(",")}")
+        //println(s"$item: ${ranges.mkString(",")}")
         ranges.flatMap(range =>
           maps(item)
             .dropWhile(r => r.source + r.length < range.destination)
