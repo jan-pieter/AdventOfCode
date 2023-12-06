@@ -11,4 +11,3 @@ object Problem06 extends App:
   val input2 = Race(71530, 940200)
 //  val input2 = Race(53717880, 275118112151524L)
   println((0 to input2.time).count(simulate(_, input2.time) > input2.distance))
-  
