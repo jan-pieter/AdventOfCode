@@ -30,11 +30,10 @@ object Problem15 extends App:
       }
       hashmap(seq.tail, result)
 
-  val result = power(hashmap(input, Vector.fill(256)(Map.empty)))
-  println(result)
-
   def power(boxes: Vector[Map[String, (Int, Int)]]): Long =
     boxes.zipWithIndex.map((map, i) =>
-      map.view.values.map(value => ((i+1) * (value._1+1) * value._2).toLong).sum
+      map.view.values.map(value => ((i + 1) * (value._1 + 1) * value._2).toLong).sum
     ).sum
 
+  val result = power(hashmap(input, Vector.fill(256)(Map.empty)))
+  println(result)
