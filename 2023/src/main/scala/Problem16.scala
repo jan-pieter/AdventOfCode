@@ -1,4 +1,6 @@
 import Problem16.Direction.*
+
+import scala.annotation.tailrec
 import scala.io.Source
 
 object Problem16 extends App:
@@ -8,35 +10,38 @@ object Problem16 extends App:
     case North, East, South, West
 
   case class Beam(x: Int, y: Int, direction: Direction) {
+    val isValid: Boolean = x >= 0 && y >= 0 && y < input.length && x < input.head.length
     def mirror: Char = input(y)(x)
-    def continue: Beam = direction match {
+    def continue: Beam = direction match
       case North => copy(y = y - 1)
       case East => copy(x = x + 1)
       case South => copy(y = y + 1)
       case West => copy(x = x - 1)
-    }
-    val isValid: Boolean = x >= 0 && y >= 0 && y < input.length && x < input.head.length
   }
 
+  @tailrec
   def beams(active: Vector[Beam], seen: Set[Beam]): Set[Beam] = {
     val notSeen = active.filterNot(seen)
     if notSeen.isEmpty then seen else
       val beam = notSeen.head
-      val next: Vector[Beam] = (beam.mirror, beam.direction) match {
-        case ('.', _) => Vector(beam.continue)
-        case ('|', North) | ('|', South) => Vector(beam.continue)
-        case ('-', East) | ('-', West) => Vector(beam.continue)
-        case ('|', _) => Vector(Beam(beam.x, beam.y - 1, North), Beam(beam.x, beam.y + 1, South))
-        case ('-', _) => Vector(Beam(beam.x - 1, beam.y, West), Beam(beam.x + 1, beam.y, East))
-        case ('/', North) => Vector(Beam(beam.x + 1, beam.y, East))
-        case ('/', East) => Vector(Beam(beam.x, beam.y - 1, North))
-        case ('/', South) => Vector(Beam(beam.x - 1, beam.y, West))
-        case ('/', West) => Vector(Beam(beam.x, beam.y + 1, South))
-        case ('\\', North) => Vector(Beam(beam.x - 1, beam.y, West))
-        case ('\\', East) => Vector(Beam(beam.x, beam.y + 1, South))
-        case ('\\', South) => Vector(Beam(beam.x + 1, beam.y, East))
-        case ('\\', West) => Vector(Beam(beam.x, beam.y - 1, North))
+      val nextDirection = (beam.mirror, beam.direction) match {
+        case ('.', direction) => Vector(direction)
+        case ('|', North) => Vector(North)
+        case ('|', South) => Vector(South)
+        case ('-', East) => Vector(East)
+        case ('-', West) => Vector(West)
+        case ('|', _) => Vector(North, South)
+        case ('-', _) => Vector(West, East)
+        case ('/', North) => Vector(East)
+        case ('/', East) => Vector(North)
+        case ('/', South) => Vector(West)
+        case ('/', West) => Vector(South)
+        case ('\\', North) => Vector(West)
+        case ('\\', East) => Vector(South)
+        case ('\\', South) => Vector(East)
+        case ('\\', West) => Vector(North)
       }
+      val next = nextDirection.map(direction => beam.copy(direction = direction).continue)
       beams(notSeen.tail ++ next.filter(_.isValid), seen + beam)
   }
 
