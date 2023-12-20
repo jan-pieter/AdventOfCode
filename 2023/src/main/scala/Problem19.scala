@@ -1,6 +1,5 @@
 import scala.annotation.tailrec
 import scala.collection.immutable.NumericRange
-import scala.collection.parallel.CollectionConverters.*
 import scala.io.Source
 
 object Problem19 extends App:
