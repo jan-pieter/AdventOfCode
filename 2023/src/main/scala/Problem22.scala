@@ -13,8 +13,6 @@ object Problem22 extends App:
 //  input.foreach(println(_))
   println(input.size)
 
-  val lines = Source.fromResource("22-input.txt").getLines().toList
-
   val maxZ = input.map(brick => brick.z2).max
   val maxY = input.map(brick => brick.y2).max
   val maxX = input.map(brick => brick.x2).max
