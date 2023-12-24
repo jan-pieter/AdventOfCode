@@ -29,4 +29,9 @@ lazy val aoc2022 = (project in file("2022")).settings(commonSettings).settings(
   )
 )
 
-lazy val aoc2023 = (project in file("2023")).settings(commonSettings)
+lazy val aoc2023 = (project in file("2023")).settings(commonSettings).settings(
+  libraryDependencies ++= Seq(
+    ("org.scala-graph" % "graph-core" % "2.0.1").cross(CrossVersion.for3Use2_13),
+    ("org.scala-graph" % "graph-dot" % "2.0.0").cross(CrossVersion.for3Use2_13)
+  )
+)
