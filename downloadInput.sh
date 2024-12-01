@@ -1,6 +1,6 @@
 #!/bin/bash
 
-YEAR=2023
+YEAR=2024
 DAY=1
 
 formatted_day=$(printf "%02d" $DAY)
