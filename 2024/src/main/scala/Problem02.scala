@@ -11,5 +11,5 @@ object Problem02 extends App:
   println(levels.count(isSafe))
 
   def isSafe2(level: Vector[Int]): Boolean =
-    isSafe(level) || level.indices.exists(i => isSafe(level.slice(0, i) ++ level.slice(i+1, level.length)))
+    isSafe(level) || level.indices.exists(i => isSafe(level.take(i) ++ level.drop(i+1)))
   println(levels.count(isSafe2))
