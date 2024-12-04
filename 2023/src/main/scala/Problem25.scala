@@ -46,10 +46,10 @@ object Problem25 extends App:
     val dist = Array.fill(graph.nodes.size, graph.nodes.size)(Int.MaxValue)
     val prev = Array.fill(graph.nodes.size, graph.nodes.size)("")
 
-    graph.edges.foreach{ edge =>
+    /*graph.edges.foreach{ edge =>
       dist(nodeIndex(edge.source))(nodeIndex(edge.target)) = 1
       prev(nodeIndex(edge.source))(nodeIndex(edge.target)) = edge.source
-    }
+    }*/
     graph.nodes.foreach { node =>
       dist(nodeIndex(node))(nodeIndex(node)) = 0
       prev(nodeIndex(node))(nodeIndex(node)) = node
