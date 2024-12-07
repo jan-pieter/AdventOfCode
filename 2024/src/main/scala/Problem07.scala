@@ -5,8 +5,8 @@ object Problem07 extends App:
   val file = "07-input.txt"
   val input = Source.fromResource(file).getLines().toVector
   case class Equation(value: Long, components: Vector[Long]) {
-    def validOperators(validOperators: Vector[String]): Vector[Vector[String]] =
-      validOperators.map(op => Vector.fill(components.size-1)(op)).reduce(_ ++ _)
+    def validOperators(operators: Vector[String]): Vector[Vector[String]] =
+      operators.map(op => Vector.fill(components.size-1)(op)).reduce(_ ++ _)
       .combinations(components.size - 1)
       .flatMap(_.permutations)
       .toVector
