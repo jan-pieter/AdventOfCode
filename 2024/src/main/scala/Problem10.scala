@@ -5,12 +5,12 @@ object Problem10 extends App:
   val file = "10-input.txt"
   val input = Source.fromResource(file).getLines().toVector.map(_.toVector.map(_.asDigit))
 
-  def neighbours(y: Int, x: Int): Vector[(Int, Int)] = (for {
-    (dy, dx) <- List((-1, 0), (1, 0), (0, -1), (0, 1))
+  def neighbours(y: Int, x: Int): Vector[(Int, Int)] = for {
+    (dy, dx) <- Vector((-1, 0), (1, 0), (0, -1), (0, 1))
     if y + dy >= 0 && y + dy < input.length
     if x + dx >= 0 && x + dx < input(y + dy).length
     if input(y + dy)(x + dx) == input(y)(x) + 1
-  } yield (y + dy, x + dx)).toVector
+  } yield (y + dy, x + dx)
 
   def topsReachable(y: Int, x: Int): Set[(Int, Int)] = {
     val height = input(y)(x)
