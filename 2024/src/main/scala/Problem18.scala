@@ -4,12 +4,8 @@ import scalax.collection.mutable.Graph
 import scala.io.Source
 
 object Problem18 extends App:
-//  val file = "18-test.txt"
-  val file = "18-input.txt"
-//  val firstBytes = 12
-//  val gridSize = 7
-  val firstBytes = 1024
-  val gridSize = 71
+//  val (file, firstBytes, gridSize) = ("18-test.txt", 12, 7)
+  val (file, firstBytes, gridSize) = ("18-input.txt", 1024, 71)
   val input = Source.fromResource(file).getLines().toVector
   val bytes = input.map {
     case s"$x,$y" => (y.toInt, x.toInt)
