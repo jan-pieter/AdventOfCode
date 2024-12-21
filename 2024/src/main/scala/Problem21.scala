@@ -107,57 +107,32 @@ object Problem21 extends App:
       val allPaths = path.permutations.toVector
       allPaths.filterNot(dirHasGap(ay, ax, _)).map(_.appended('A'))
     })
-
+  // Naive solution
 //  val result: Vector[Int] = input.map(code => numSeqs(code).flatMap(dirSeqs).flatMap(dirSeqs).map(_.length).min * code.take(3).toInt)
 //  println(result.sum)
 
-  def score(path: Vector[Char]): Long = ('A' +: path).sliding(2).map(pair =>
-    dirPaths(pair(0), pair(1)).head.length + 1L
-  ).sum
-
-  def withRobots(code: String, robotKeypads: Int): Long = {
-    var res = numSeqs(code)
-    for _ <- 1 to robotKeypads do
-      res = res.flatMap(dirSeqs)
-    res.map(_.length).min * code.take(3).toLong
-  }
-
-  def nested(path: Vector[Char], times: Int, bestSoFar: Long): Long = {
-    if times == 0 then path.length else
-      dirSeqs(path).foldLeft(bestSoFar)((acc, newPath) =>
-        val bestPathLength = if newPath.length <= acc then nested(newPath, times - 1, acc) else acc
-        Math.min(acc, bestPathLength)
-      )
-  }
-
-  def withRobots2(code: String, robotKeypads: Int): Long = {
-    val res = numSeqs(code)
-    res.foldLeft(Long.MaxValue)((acc, path) =>
-      val bestPathLength = nested(path, robotKeypads, Long.MaxValue)
-      Math.min(acc, bestPathLength)
-    ) * code.take(3).toLong
-  }
-
-  val cache = mutable.Map.empty[(Char, Char, Int), Long]
-  for {
-    c <- 0 to 25
-    a <- Vector('A', 'v', '^', '<', '>')
-    b <- Vector('A', 'v', '^', '<', '>')
-  } {
-    if c == 0 then
-      cache((a, b, c)) = dirPaths(a, b).map(_.length).min
-    else
-      cache((a, b, c)) = dirPaths(a, b).map(path =>
-        ('A' +: path).sliding(2).map(pair =>
-          cache((pair(0), pair(1), c - 1))
-        ).sum
-      ).min
-  }
-  def withRobots3(code: String, robotKeypads: Int): Long = {
+  // Smart solution :P
+  def withIntermediateRobots(code: String, robotKeypads: Int): Long = {
+    val cache = mutable.Map.empty[(Char, Char, Int), Long]
+    for {
+      c <- 0 until robotKeypads
+      a <- Vector('A', 'v', '^', '<', '>')
+      b <- Vector('A', 'v', '^', '<', '>')
+    } {
+      if c == 0 then
+        cache((a, b, c)) = dirPaths(a, b).map(_.length).min
+      else
+        cache((a, b, c)) = dirPaths(a, b).map(path =>
+          ('A' +: path).sliding(2).map(pair =>
+            cache((pair(0), pair(1), c - 1))
+          ).sum
+        ).min
+    }
     val res = numSeqs(code)
     res.map(path => ('A' +: path).sliding(2).map(pair =>
       cache((pair(0), pair(1), robotKeypads-1))
     ).sum).min * code.take(3).toLong
   }
-  println(input.map(withRobots3(_, 2)).sum)
-  println(input.map(withRobots3(_, 25)).sum)
+
+  println(input.map(withIntermediateRobots(_, 2)).sum)
+  println(input.map(withIntermediateRobots(_, 25)).sum)
