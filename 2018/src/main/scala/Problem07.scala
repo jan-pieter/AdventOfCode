@@ -10,9 +10,9 @@ object Problem07 extends App {
     splitted(1) -> splitted(7)
   }
 
-  val dependenciesToSatisfy: mutable.Set[(String, String)] = mutable.Set(dependencies :_*)
+  val dependenciesToSatisfy: mutable.Set[(String, String)] = mutable.Set(dependencies*)
 
-  val toExecute: mutable.SortedSet[String] = mutable.SortedSet(dependencies.map(_._1).filterNot(dependencies.map(_._2).contains) :_*)
+  val toExecute: mutable.SortedSet[String] = mutable.SortedSet(dependencies.map(_._1).filterNot(dependencies.map(_._2).contains)*)
 
   val executeOrder: mutable.Queue[String] = mutable.Queue.empty
 

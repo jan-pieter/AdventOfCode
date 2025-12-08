@@ -12,7 +12,7 @@ object Problem17 extends App {
   val instructions = "A,A,B,C,A,C,B,C,A,B\nL,4,L,10,L,6\nL,6,L,4,R,8,R,8\nL,6,R,8,L,10,L,8,L,8\nn\n"
   println(instructions.map(_.toLong).mkString(", "))
   println('\n'.toLong)
-  val input = mutable.Queue[Long](instructions.map(_.toLong) :_*)
+  val input = mutable.Queue[Long](instructions.map(_.toLong)*)
   val processor = new IntCodeProcessor(register, input)
 
   val world = Array.fill(50,50)(' ')

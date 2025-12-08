@@ -16,7 +16,7 @@ object Problem14 extends App {
   def step(str: String): String ={
     str.sliding(2).map{ part =>
       rules.get(part).map { sub =>
-        part(0) + sub
+        s"${part(0)}$sub"
       }.getOrElse(part.dropRight(1))
     }.mkString + str.takeRight(1)
   }

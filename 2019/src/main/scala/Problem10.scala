@@ -88,7 +88,7 @@ object Problem10 extends App {
     }).flatten
   }
 
-  val result: Vector[Asteroid] = otherAsteroids(bestAsteroid._2._1, bestAsteroid._2._2).groupBy(_.angle).mapValues(_.sortBy(_.distance).zipWithIndex).values.flatten.toVector.sortBy(tuple => (tuple._2, tuple._1.angle * -1)).map(_._1)
+  val result: Vector[Asteroid] = otherAsteroids(bestAsteroid._2._1, bestAsteroid._2._2).groupBy(_.angle).view.mapValues(_.sortBy(_.distance).zipWithIndex).values.flatten.toVector.sortBy(tuple => (tuple._2, tuple._1.angle * -1)).map(_._1)
 
   //result.foreach(item => println(item))
 //  println(result(0))

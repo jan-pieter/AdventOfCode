@@ -4,7 +4,7 @@ object Problem02 extends App {
 
   val boxes = Source.fromResource("02-input.txt").getLines().toList
 
-  val histoValues = boxes.map(_.groupBy(identity).mapValues(_.length))
+  val histoValues = boxes.map(_.groupBy(identity).view.mapValues(_.length))
 
   val twoTimes = histoValues.count(_.values.toSet.contains(2))
   val threeTimes = histoValues.count(_.values.toSet.contains(3))

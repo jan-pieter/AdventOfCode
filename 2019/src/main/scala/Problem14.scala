@@ -21,8 +21,8 @@ object Problem14 extends App {
 
   demands.put("FUEL", 1)
 
-  while (demands.filterKeys(_ != "ORE").values.exists(_ > 0)) {
-    val (target, amount) = demands.filterKeys(_ != "ORE").find(_._2 > 0).get
+  while (demands.view.filterKeys(_ != "ORE").values.exists(_ > 0)) {
+    val (target, amount) = demands.view.filterKeys(_ != "ORE").find(_._2 > 0).get
     val dependency = dependencies(target)
     val factor = Math.ceil(amount.toDouble / dependency.amount.toDouble).toInt
     dependency.sources.foreach(source =>

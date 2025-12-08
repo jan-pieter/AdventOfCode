@@ -14,7 +14,7 @@ object Problem02 extends App {
   object Line {
     private val pattern = "([0-9]+)-([0-9]+) ([A-Za-z]): ([A-Za-z]+)".r
     def fromString(str: String): Line = {
-      val pattern(min, max, char, password) = str
+      val pattern(min, max, char, password) = str: @unchecked
       Line(min.toInt, max.toInt, char(0), password)
     }
   }

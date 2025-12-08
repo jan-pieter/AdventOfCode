@@ -15,14 +15,14 @@ object Problem17 extends App:
     def next: Computer = {
       val (ins, op) = program(instruction)
       ins match {
-        case 0 => copy(a = a / Math.pow(2L, combo(op)).toLong, instruction = instruction + 1)
+        case 0 => copy(a = a / Math.pow(2L, combo(op).toDouble).toLong, instruction = instruction + 1)
         case 1 => copy(b = b ^ op, instruction = instruction + 1)
         case 2 => copy(b = combo(op) % 8L, instruction = instruction + 1)
         case 3 => if (a == 0L) copy(instruction = instruction + 1) else copy(instruction = op)
         case 4 => copy(b = b ^ c, instruction = instruction + 1)
         case 5 => copy(output = output.appended(combo(op) % 8L), instruction = instruction + 1)
-        case 6 => copy(b = a / Math.pow(2L, combo(op)).toLong, instruction = instruction + 1)
-        case 7 => copy(c = a / Math.pow(2L, combo(op)).toLong, instruction = instruction + 1)
+        case 6 => copy(b = a / Math.pow(2L, combo(op).toDouble).toLong, instruction = instruction + 1)
+        case 7 => copy(c = a / Math.pow(2L, combo(op).toDouble).toLong, instruction = instruction + 1)
       }
     }
   }

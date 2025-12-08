@@ -43,11 +43,11 @@ object Problem12 extends App:
             case Some('#') if toConsider.take(leftGroups.head).count(_ != '.') == leftGroups.head && (toConsider.length == leftGroups.head || toConsider.drop(leftGroups.head).head == '.')  =>
               partialArrangements(toConsider.drop(leftGroups.head), leftGroups.tail)
             case Some('#') if toConsider.take(leftGroups.head).count(_ != '.') == leftGroups.head && toConsider.drop(leftGroups.head).head == '?' =>
-              partialArrangements('.' + toConsider.drop(leftGroups.head+1), leftGroups.tail)
+              partialArrangements("." + toConsider.drop(leftGroups.head+1), leftGroups.tail)
             case Some('#') => 0L
             case Some('?') =>
               partialArrangements(toConsider.tail, leftGroups) +
-                partialArrangements('#' + toConsider.tail, leftGroups)
+                partialArrangements("#" + toConsider.tail, leftGroups)
           }
           cache.addOne((toConsider -> leftGroups) -> r)
           r

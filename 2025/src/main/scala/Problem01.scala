@@ -1,3 +1,4 @@
+import scala.annotation.nowarn
 import scala.io.Source
 
 object Problem01 extends App:
@@ -8,6 +9,7 @@ object Problem01 extends App:
     case regex(direction, amount) => (direction, amount.toInt)
   }
 
+  @nowarn("msg=not.*?exhaustive")
   val result1 = input.foldLeft(Vector(50))((acc, next) => next match {
     case ("L", amount) => acc.prepended((acc.head - (amount % 100) + 100) % 100)
     case ("R", amount) => acc.prepended((acc.head + (amount % 100)) % 100)
@@ -15,6 +17,7 @@ object Problem01 extends App:
 
   println(result1.count(_ == 0))
 
+  @nowarn("msg=not.*?exhaustive")
   val result2 = input.foldLeft(Vector((50, 0L)))((acc, next) => next match {
     case ("L", amount) =>
       val last = acc.head

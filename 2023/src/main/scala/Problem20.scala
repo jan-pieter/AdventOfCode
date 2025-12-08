@@ -40,7 +40,7 @@ object Problem20 extends App:
     case m => m
   }
 
-  val moduleMap: mutable.Map[String, Module] = mutable.Map(updatedConjunctions.map(m => m.name -> m): _*)
+  val moduleMap: mutable.Map[String, Module] = mutable.Map(updatedConjunctions.map(m => m.name -> m)*)
   var lowPulses: Long = 0L
   var highPulses: Long = 0L
   var buttonPushes: Long = 0L

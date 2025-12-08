@@ -43,7 +43,7 @@ object Problem04 extends App {
 
   //println(endState)
 
-  val guardNr = endState.map.mapValues(hours => hours.map(_.sum).sum).toList.maxBy(_._2)._1
+  val guardNr = endState.map.view.mapValues(hours => hours.map(_.sum).sum).toList.maxBy(_._2)._1
 
   println(s"Guard $guardNr")
 
@@ -53,7 +53,7 @@ object Problem04 extends App {
 
   println(guardNr * minute)
 
-  val best = endState.map.mapValues(_.reduce(_.zip(_).map { case (a, b) => a + b }).zipWithIndex.maxBy(_._1)).maxBy { case (guardNr, (maxAsleep, minute)) => maxAsleep}
+  val best = endState.map.view.mapValues(_.reduce(_.zip(_).map { case (a, b) => a + b }).zipWithIndex.maxBy(_._1)).maxBy { case (guardNr, (maxAsleep, minute)) => maxAsleep}
 
   println(s"Guard ${best._1} minute ${best._2._2} maxAsleep ${best._2._1} answer: ${best._1 * best._2._2}")
 

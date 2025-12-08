@@ -12,7 +12,7 @@ object Problem21 extends App {
   val instructions = "NOT A J\nNOT B T\nOR T J\nNOT C T\nOR T J\nAND D J\nNOT E T\nAND H T\nOR E T\nAND T J\nRUN\n"
 //  println(instructions.map(_.toLong).mkString(", "))
 
-  val input = mutable.Queue[Long](instructions.map(_.toLong): _*)
+  val input = mutable.Queue[Long](instructions.map(_.toLong)*)
   val processor = new IntCodeProcessor(register, input)
 
   var output = -1L

@@ -143,7 +143,7 @@ object Problem19 extends App {
 
   //println(instances.count(str => rules(0).matches(str) == (true -> "")))
 
-  val rules2 = rules + (8 -> Rule8(), 11 -> Rule11(), 0 -> Rule0())//, 42 -> StaticRule(42, "x"), 31 -> StaticRule(31, "y"))
+  val rules2 = rules ++ Map(8 -> Rule8(), 11 -> Rule11(), 0 -> Rule0())//, 42 -> StaticRule(42, "x"), 31 -> StaticRule(31, "y"))
 
   //val testInstances = List("xxy", "xxxyy", "xx")
   //println(testInstances.map(rules2(0).matches))

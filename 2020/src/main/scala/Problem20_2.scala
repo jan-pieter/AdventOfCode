@@ -99,7 +99,7 @@ object Problem20_2  extends App {
 
   def trySolution(rotated: Int, flipped: Boolean): Option[Array[Array[Tile]]] = Try {
     val imageWithTiles: Array[Array[Tile]] = Array.ofDim[Tile](imageLength, imageLength)
-    val tilesLeft: mutable.Set[Tile] = mutable.Set(tiles: _*)
+    val tilesLeft: mutable.Set[Tile] = mutable.Set(tiles*)
 
     for {
       y <- imageWithTiles.indices

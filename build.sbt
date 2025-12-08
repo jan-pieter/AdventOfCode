@@ -3,7 +3,8 @@ name := "AdventOfCode"
 version := "0.1"
 
 val commonSettings = Seq(
-  scalaVersion := "3.5.2"
+  scalaVersion := "3.7.4",
+  scalacOptions += "-deprecation"
 )
 
 lazy val root = (project in file(".")).settings(commonSettings).aggregate(aoc2017, aoc2018, aoc2019, aoc2020, aoc2021, aoc2022, aoc2023)

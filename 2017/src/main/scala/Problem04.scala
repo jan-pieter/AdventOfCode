@@ -8,7 +8,7 @@ object Problem04 extends App {
 
   println(withoutDuplicates.size)
 
-  val withoutAnagrams = input.filter(words => words.length == words.map(word => word.toList.groupBy(c => c).mapValues(_.size)).toSet.size)
+  val withoutAnagrams = input.filter(words => words.length == words.map(word => word.toList.groupBy(c => c).view.mapValues(_.size)).toSet.size)
 
   println(withoutAnagrams.size)
 

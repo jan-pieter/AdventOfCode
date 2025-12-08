@@ -23,7 +23,7 @@ object Problem15 extends App {
     }
 
     risk(input.length - 1)(input.head.length - 1) = input(input.length - 1)(input.head.length - 1)
-    val queue: mutable.PriorityQueue[(Int, Int)] = mutable.PriorityQueue.empty(Ordering.by(t => -1 * (input(t._2)(t._1) + shortestPath(t._1, t._2))))
+    val queue: mutable.PriorityQueue[(Int, Int)] = mutable.PriorityQueue.empty(using Ordering.by(t => -1 * (input(t._2)(t._1) + shortestPath(t._1, t._2))))
     queue.addAll(neighbours(input.head.length - 1, input.length - 1))
     while (queue.nonEmpty) {
       val (x, y) = queue.dequeue()

@@ -15,8 +15,8 @@ object Problem22 extends App {
 
   val splittedInput = split(input)
 
-  val deck1: mutable.Queue[Int] = mutable.Queue(splittedInput(0).filterNot(_.isEmpty).drop(1).map(_.toInt): _*)
-  val deck2: mutable.Queue[Int] = mutable.Queue(splittedInput(1).filterNot(_.isEmpty).drop(1).map(_.toInt): _*)
+  val deck1: mutable.Queue[Int] = mutable.Queue(splittedInput(0).filterNot(_.isEmpty).drop(1).map(_.toInt)*)
+  val deck2: mutable.Queue[Int] = mutable.Queue(splittedInput(1).filterNot(_.isEmpty).drop(1).map(_.toInt)*)
 
   def combat(input1: mutable.Queue[Int], input2: mutable.Queue[Int]): mutable.Queue[Int] = {
     val deck1 = input1.clone()

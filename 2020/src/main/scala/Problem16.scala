@@ -63,7 +63,7 @@ object Problem16 extends App {
 
   while (fieldPositions.size != fields.length) {
 
-    val toConsider = positions.filterKeys(!fieldPositions.contains(_)).mapValues(_.filterNot(assigned.contains))
+    val toConsider = positions.view.filterKeys(!fieldPositions.contains(_)).mapValues(_.filterNot(assigned.contains))
     val (field, index) = toConsider.collectFirst {
       case (field, indices) if indices.size == 1 => field -> indices.head
     }.orElse{
@@ -79,7 +79,7 @@ object Problem16 extends App {
 
   println(fieldPositions)
 
-  val departureValues = fieldPositions.filterKeys(_.name.startsWith("departure")).map {
+  val departureValues = fieldPositions.view.filterKeys(_.name.startsWith("departure")).map {
     case (_, index) => myTicket.values(index)
   }
 

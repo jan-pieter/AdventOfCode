@@ -7,7 +7,7 @@ object Problem21 extends App:
   val input = Source.fromResource(file).getLines().toVector
 
   def numSeqs(s: String): Vector[Vector[Char]] =
-    ('A' + s).sliding(2).foldLeft(Vector(Vector.empty[Char])) { case (acc, pair) =>
+    ("A" + s).sliding(2).foldLeft(Vector(Vector.empty[Char])) { case (acc, pair) =>
       val paths = numPaths(pair(0), pair(1))
       paths.flatMap { path =>
         acc.map(_ ++ path)
