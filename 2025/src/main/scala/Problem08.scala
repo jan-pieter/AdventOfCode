@@ -1,4 +1,3 @@
-import scala.collection.mutable
 import scala.io.Source
 
 object Problem08 extends App:
@@ -10,13 +9,13 @@ object Problem08 extends App:
     case s"$x,$y,$z" => Box(x.toInt, y.toInt, z.toInt)
   }
 //  println(input)
-  val pairs: Vector[(Box, Box)] = (for {
+  private val pairs: Vector[(Box, Box)] = (for {
     box1 <- input
     box2 <- input
     if box1 != box2 && box1.hashCode() < box2.hashCode()
   } yield box1 -> box2).sortBy((box1, box2) => box1.distanceTo(box2))
 
-  val circuits = pairs.take(toConnect).foldLeft(Map.empty[Box, Int]){ (circuits, pair) =>
+  private val circuits = pairs.take(toConnect).foldLeft(Map.empty[Box, Int]){ (circuits, pair) =>
     circuits.get(pair._1) -> circuits.get(pair._2) match {
       case Some(c1) -> Some(c2) if c1 == c2 => circuits // Do nothing
       case Some(c1) -> Some(c2) => // Merge circuits
@@ -32,7 +31,7 @@ object Problem08 extends App:
   }
   println(circuits.groupBy(_._2).map((cluster, elems) => cluster -> elems.size).toVector.sortBy(_._2).reverse.take(3).map(_._2).product)
 
-  val (_, connectedLast) = pairs.foldLeft((Map.empty[Box, Int], Option.empty[(Box, Box)])) { case ((circuits, last), pair) =>
+  private val (_, connectedLast) = pairs.foldLeft((Map.empty[Box, Int], Option.empty[(Box, Box)])) { case ((circuits, last), pair) =>
     circuits.get(pair._1) -> circuits.get(pair._2) match {
       case Some(c1) -> Some(c2) if c1 == c2 => circuits -> last // Do nothing
       case Some(c1) -> Some(c2) => // Merge circuits
