@@ -16,38 +16,20 @@ object Problem08 extends App:
     if box1 != box2 && box1.hashCode() < box2.hashCode()
   } yield box1 -> box2).sortBy((box1, box2) => box1.distanceTo(box2))
 
-  val circuits = mutable.Map.empty[Box, Int]
-  var nextCircuit = 1
-  var connected = 0
-  var i = 0
-  while (connected < toConnect){
-    val pair = pairs(i)
+  val circuits = pairs.take(toConnect).foldLeft(Map.empty[Box, Int]){ (circuits, pair) =>
     circuits.get(pair._1) -> circuits.get(pair._2) match {
-      case Some(c1) -> Some(c2) if c1 == c2 =>
-//        println(s"Doing nothing for $pair") // Do nothing
-        connected += 1
+      case Some(c1) -> Some(c2) if c1 == c2 => circuits // Do nothing
       case Some(c1) -> Some(c2) => // Merge circuits
-//        println(s"Merging $pair")
-        circuits.filter(_._2 == c2).foreach(p => circuits.update(p._1, c1))
-        connected += 1
+        circuits.filterNot(_._2 == c2) ++ circuits.filter(_._2 == c2).map((key, value) => key -> c1)
       case Some(c1) -> None => // Connect
-//        println(s"Adding2 $pair")
-        circuits.addOne(pair._2 -> c1)
-        connected += 1
+        circuits + (pair._2 -> c1)
       case None -> Some(c2) => // Connect
-//        println(s"Adding1 $pair")
-        circuits.addOne(pair._1 -> c2)
-        connected += 1
+        circuits + (pair._1 -> c2)
       case None -> None => // New circuit
-//        println(s"New for $pair")
-        circuits.addOne(pair._1 -> nextCircuit)
-        circuits.addOne(pair._2 -> nextCircuit)
-        nextCircuit += 1
-        connected += 1
+        val nextCircuit = circuits.values.maxOption.getOrElse(0) + 1
+        circuits + (pair._1 -> nextCircuit) + (pair._2 -> nextCircuit)
     }
-    i += 1
   }
-
   println(circuits.groupBy(_._2).map((cluster, elems) => cluster -> elems.size).toVector.sortBy(_._2).reverse.take(3).map(_._2).product)
 
   val circuits2 = mutable.Map.empty[Box, Int]
