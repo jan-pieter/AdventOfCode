@@ -1,5 +1,3 @@
-import optimus.algebra.{Const, Expression}
-
 import scala.collection.mutable
 import scala.io.Source
 
@@ -33,6 +31,7 @@ object Problem10 extends App:
     }
 
     def solveWithMIP: Long = {
+      import optimus.algebra.{Const, Expression}
       import optimus.optimization.*
       import optimus.optimization.enums.SolverLib
       import optimus.optimization.model.MPIntVar
