@@ -47,6 +47,8 @@ lazy val aoc2024 = (project in file("2024")).settings(commonSettings).settings(
 lazy val aoc2025 = (project in file("2025")).settings(commonSettings).settings(
   libraryDependencies ++= Seq(
     ("org.scala-graph" % "graph-core" % "2.0.1").cross(CrossVersion.for3Use2_13),
-    ("org.scala-graph" % "graph-dot" % "2.0.0").cross(CrossVersion.for3Use2_13)
+    ("org.scala-graph" % "graph-dot" % "2.0.0").cross(CrossVersion.for3Use2_13),
+    "com.github.vagmcs" %% "optimus" % "3.4.5",
+    "com.github.vagmcs" %% "optimus-solver-oj" % "3.4.5",
   )
 )
